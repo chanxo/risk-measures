@@ -41,7 +41,7 @@ for (currency in 1:length(cryto_as_list)) {
   var_ = getSymbols(cryto_as_list[currency], verbose = FALSE, warnings = FALSE,
            src = "yahoo",
            env = crypto_to_usd, auto.assign = FALSE)[,6]
-  # the 6th variable is the Adjustted prices
+  # the 6th variable is the Adjusted prices
   colnames(var_) = paste(cryto_var_names[currency],"adj", sep = "_")
   assign(paste(cryto_var_names[currency]), var_)
 }
