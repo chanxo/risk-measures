@@ -1,6 +1,5 @@
-# Title     : TODO
-# Objective : TODO
-# Created by: chanx
+# Title     : Market Risk Measures using crytocurrency data
+# Created by: Francisco Prado Moreno
 # Created on: 09/03/2021
 
 # Importing useful libraries ####
