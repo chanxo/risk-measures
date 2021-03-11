@@ -114,6 +114,8 @@ pl_distribution = NULL
 for (t in 1:time_span) {
   pl_distribution = rbind(pl_distribution,
                           sort(rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sum((w/7) * diff_df[t,]))))
+  # we assume normals are iid, otherwise we cannot just sum their sds, we would need their covariances
+  # too, which again we do not have due the lack of intraday data.
 }
 pl_distribution = xts(pl_distribution, order.by = index(r_df))
 
