@@ -123,7 +123,7 @@ Value_at_risk = function(pnl_distribution, alpha=0.05) {
   return(quantile(pnl_distribution, p = alpha))
 }
 
-#?apply() # using lapply(x, 1, fun) should suffice.
+#?apply() # using apply(x, 1, fun) should suffice.
 
 VAR_t_5p = xts(unlist(apply(pl_distribution, 1, Value_at_risk)), order.by = index(r_df))
 
