@@ -113,8 +113,25 @@ n_sim = 2000
 pl_distribution = NULL
 for (t in 1:time_span) {
   pl_distribution = rbind(pl_distribution,
-                          rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sum((w/7) * diff_df[t,])))
+                          sort(rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sum((w/7) * diff_df[t,]))))
 }
 pl_distribution = xts(pl_distribution, order.by = index(r_df))
 
-# TODO add VaR and ES
+# Defining VAR (Value at Risk) and ES (Expected Shortfall)
+
+Value_at_risk = function(pnl_distribution, alpha=0.05) {
+  return(quantile(pnl_distribution, p = alpha))
+}
+
+#?apply() # using lapply(x, 1, fun) should suffice.
+
+VAR_t_5p = xts(unlist(apply(pl_distribution, 1, Value_at_risk)), order.by = index(r_df))
+
+ES = function(pnl_distribution, alpha = 0.05) {
+  return(sum(pnl_distribution[which(pnl_distribution <= Value_at_risk(pnl_distribution))])/alpha)
+}
+
+ES_t_5p = xts(unlist(apply(pl_distribution, 1, ES)), order.by = index(r_df))
+
+
+# TODO do some testing, add interpretation.
