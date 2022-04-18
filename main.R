@@ -113,7 +113,7 @@ n_sim = 2000
 pl_distribution = NULL
 for (t in 1:time_span) {
   pl_distribution = rbind(pl_distribution,
-                          sort(rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sum((w/7) * diff_df[t,]))))
+                          sort(rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sqrt( sum(w^2 * (diff_df[t,]/7)^2)) )))
   # we assume normals are iid, otherwise we cannot just sum their sds, we would need their covariances
   # too, which again we do not have due the lack of intraday data.
   # The reason why the sum of sds is divided by 7 is because the diff_df contains the "full range" (a proxy really) of
