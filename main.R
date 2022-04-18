@@ -116,6 +116,9 @@ for (t in 1:time_span) {
                           sort(rnorm(n_sim, mean = sum(w * r_df[t,]), sd = sum((w/7) * diff_df[t,]))))
   # we assume normals are iid, otherwise we cannot just sum their sds, we would need their covariances
   # too, which again we do not have due the lack of intraday data.
+  # The reason why the sum of sds is divided by 7 is because the diff_df contains the "full range" (a proxy really) of
+  # the distribution for each crypto for each day, since we saw in the graphs, that most returns were
+  # centered around 0, the full distribution contains around 7 sigmas.
 }
 pl_distribution = xts(pl_distribution, order.by = index(r_df))
 
@@ -128,12 +131,13 @@ Value_at_risk = function(pnl_distribution, alpha=0.05) {
 #?apply() # using apply(x, 1, fun) should suffice.
 
 VAR_t_5p = xts(unlist(apply(pl_distribution, 1, Value_at_risk)), order.by = index(r_df))
+colnames(VAR_t_5p) = "VaR_005"
 
 ES = function(pnl_distribution, alpha = 0.05) {
   return(sum(pnl_distribution[which(pnl_distribution <= Value_at_risk(pnl_distribution))])/alpha)
 }
 
 ES_t_5p = xts(unlist(apply(pl_distribution, 1, ES)), order.by = index(r_df))
-
+colnames(ES_t_5p) = "ES_005"
 
 # TODO do some testing, add interpretation.
