@@ -93,7 +93,7 @@ portfolio_returns = sweep(r_df, MARGIN = 2, portfolio_weights, "*")
 
 # Figuring out distributions
 # ?hist.data.frame()
-hist.data.frame(as.data.frame(r_df))
+hist.data.frame(as.data.frame(r_df), mtit= '(daily) Return distribution')
 # After observing the distributions of the long-term returns for each
 # crypto-currency, normality is not too far, save some tails which most likely
 # come from days of particular losses/gains.
@@ -140,4 +140,10 @@ ES = function(pnl_distribution, alpha = 0.05) {
 ES_t_5p = xts(unlist(apply(pl_distribution, 1, ES)), order.by = index(r_df))
 colnames(ES_t_5p) = "ES_005"
 
-# TODO do some testing, add interpretation.
+
+# Let's talk about the results
+hist(VAR_t_5p, breaks=floor(length(VAR_t_5p)/10), main = "Distribution of VaR_t (5%) since 2019")
+mean(VAR_t_5p < 0)
+# From the histogram we can not fully appreciate how many of the days in the sample the VaR was negative
+# from a quick look at the sample we see that ~49% of the times the VaR was negative. We can, therefore,
+# say that on about 49% of the days the random portfolio would not lose money (have negative return).
