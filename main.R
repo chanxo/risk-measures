@@ -1,6 +1,7 @@
 # Title     : Market Risk Measures using crytocurrency data
 # Created by: Francisco Prado Moreno
 # Created on: 09/03/2021
+# Last edit : 20/04/2022
 
 # Importing useful libraries ####
 library("quantmod")
@@ -134,7 +135,7 @@ VAR_t_5p = xts(unlist(apply(pl_distribution, 1, Value_at_risk)), order.by = inde
 colnames(VAR_t_5p) = "VaR_005"
 
 ES = function(pnl_distribution, alpha = 0.05) {
-  return(sum(pnl_distribution[which(pnl_distribution <= Value_at_risk(pnl_distribution))])/alpha)
+  return(sum(pnl_distribution[which(pnl_distribution <= Value_at_risk(pnl_distribution, alpha))])/alpha)
 }
 
 ES_t_5p = xts(unlist(apply(pl_distribution, 1, ES)), order.by = index(r_df))
@@ -142,8 +143,23 @@ colnames(ES_t_5p) = "ES_005"
 
 
 # Let's talk about the results
-hist(VAR_t_5p, breaks=floor(length(VAR_t_5p)/10), main = "Distribution of VaR_t (5%) since 2019")
-mean(VAR_t_5p < 0)
+# ----------------------------
+# VaR (Value at Risk)
+# ----------------------------
+# hist(VAR_t_5p, breaks=floor(length(VAR_t_5p)/10), main = "Distribution of VaR_t (5%) since 2019")
+mean(VAR_t_5p < 0)  # 0.4925373
 # From the histogram we can not fully appreciate how many of the days in the sample the VaR was negative
 # from a quick look at the sample we see that ~49% of the times the VaR was negative. We can, therefore,
-# say that on about 49% of the days the random portfolio would not lose money (have negative return).
+# say that in about 49% of the days the random portfolio would not lose money (have negative return).
+# ----------------------------
+# ES (Expected Shortfall)
+# ----------------------------
+# Even though the portfolio loses money in only ~49% of the days, it could be that the loss in those day was
+# substantial. Here the expected shortfall could give us a better view.
+# hist(ES_t_5p, breaks=floor(length(VAR_t_5p)/10), main = "Distribution of ES_t (5%) since 2019")
+min(ES_t_5p[which(VAR_t_5p < 0)])  # -776.0609
+max(ES_t_5p[which(VAR_t_5p < 0)])  # -1.011143
+# Here we see that the mininum (daily) Expected Shortfall is ~ -776 and the maximum is about ~ -1
+# when the VaR was negative. In other words, the worst (daily) expected loss in the worst 5% of the cases when the VaR
+# was negative was ~776 (i.e., losing 776 times the initial investment). Analogously, in the best scenario the expected
+# loss in the worst 5% of the cases when the VaR was negative was ~1 (i.e., losing the initial investment).
